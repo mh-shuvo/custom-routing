@@ -1,5 +1,7 @@
 <?php
 require "Router.php";
+
+use RouterApplication\Controller\PriceController;
 use RouterApplication\Router;
 
 Router::get('/',function(){
@@ -25,6 +27,9 @@ Router::post('/class',function(){
 Router::delete('/class',function(){
     echo "Class Successfully Deletd";
 });
+
+Router::get('/price',[PriceController::class,'showPrice']);
+Router::get('/price/(\w+)',"PriceController@getPrice");
 
 
 

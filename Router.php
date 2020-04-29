@@ -1,6 +1,5 @@
 <?php
 namespace RouterApplication;
-
 class Router {
 
     private static $nomatch = true;
@@ -23,10 +22,26 @@ class Router {
         $pattern = "~^{$pattern}/?$~";
         $params = self::getMatches( $pattern );
         if ( $params ) {
+            self::$nomatch = false;
+            $functionArguments = array_slice( $params, 1 );
+
             if ( is_callable( $callback ) ) {
-                self::$nomatch = false;
-                $functionArguments = array_slice( $params, 1 );
-                $callback( ...$functionArguments );
+                if(is_array($callback)){
+                    $className = "RouterApplication\Controller\\".$callback[0];
+                    $methodName = $callback[1];
+                    $instance = $className::getInstance();
+                    $instance->$methodName(...$functionArguments);
+                }
+                else{
+                    $callback( ...$functionArguments );
+                }
+            }
+            else{
+                $callback = explode("@",$callback);
+                $className = "RouterApplication\Controller\\".$callback[0];
+                $methodName = $callback[1];
+                $instance = $className::getInstance();
+                $instance->$methodName(...$functionArguments);
             }
         }
     }
