@@ -13,7 +13,7 @@ class PriceController{
     }
 
     public function showPrice(){
-        echo "<br/>Price is 10 TK</br>";
+        echo "<br/>Price is 20 TK</br>";
     }
 
     public function getPrice($price){

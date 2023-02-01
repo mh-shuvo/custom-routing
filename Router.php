@@ -7,6 +7,7 @@ class Router {
     private static function getUrl() {
         return $_SERVER['REQUEST_URI'];
     }
+    private function __construct(){}
 
     private static function getMatches( $pattern ) {
         $url = self::getUrl();
@@ -26,22 +27,20 @@ class Router {
             $functionArguments = array_slice( $params, 1 );
 
             if ( is_callable( $callback ) ) {
+                $callback( ...$functionArguments );
+            }
+            else{
                 if(is_array($callback)){
+                    $methodName = $callback[1];
+                    $instance = $callback[0]::getInstance();
+                    $instance->$methodName(...$functionArguments);
+                }else{
+                    $callback = explode("@",$callback);
                     $className = "RouterApplication\Controller\\".$callback[0];
                     $methodName = $callback[1];
                     $instance = $className::getInstance();
                     $instance->$methodName(...$functionArguments);
                 }
-                else{
-                    $callback( ...$functionArguments );
-                }
-            }
-            else{
-                $callback = explode("@",$callback);
-                $className = "RouterApplication\Controller\\".$callback[0];
-                $methodName = $callback[1];
-                $instance = $className::getInstance();
-                $instance->$methodName(...$functionArguments);
             }
         }
     }
